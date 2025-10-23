@@ -2,33 +2,40 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
-import chatbotRoutes from "./routes/chatbot.route.js";
+import taskRoutes from "./routes/tasks.js"; // Updated to match your structure
 
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
 
-// Middleware to parse JSON
+// Middleware
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:3000", // your Next.js frontend
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"]
+  origin: process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL : "http://localhost:3000",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+  credentials: true
 }));
 
-// Database connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((error) => console.error("❌ Could not connect to MongoDB...", error));
+// Database connection with error handling
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("✅ Connected to MongoDB");
+  } catch (error) {
+    console.error("❌ Could not connect to MongoDB...", error);
+    // Continue running to allow debugging
+  }
+};
+connectDB();
 
 // Test route
 app.get("/", (req, res) => {
-  res.send("Chatbot API is running 🚀");
+  res.send("Task API is running 🚀");
 });
 
-// Define chatbot routes
-app.use("/bot/v1", chatbotRoutes);
+// Routes
+app.use("/api/v1/tasks", taskRoutes); // Updated to a more standard API path
 
-app.listen(port, () => {
-  console.log(`🚀 Server is running on port ${port}`);
-});
+// Export for Vercel serverless
+export default app;
+module.exports = app; // For CommonJS compatibility
