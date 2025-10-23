@@ -3,7 +3,7 @@ import { Message } from "../controllers/chatbot.controller.js";
 
 const router = express.Router();
 
-// POST /bot/v1/message
+// POST /api/v1/chatbot/message
 router.post("/message", Message);
 
 export default router;

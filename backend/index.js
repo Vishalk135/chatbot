@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
-import taskRoutes from "./routes/tasks.js"; // Updated to match your structure
+import taskRoutes from "./routes/chatbot.route.js";
 
 dotenv.config();
 const app = express();
@@ -30,11 +30,11 @@ connectDB();
 
 // Test route
 app.get("/", (req, res) => {
-  res.send("Task API is running 🚀");
+  res.send("Chatbot API is running 🚀");
 });
 
 // Routes
-app.use("/api/v1/tasks", taskRoutes); // Updated to a more standard API path
+app.use("/api/v1/chatbot", taskRoutes);
 
 // Export for Vercel serverless
 export default app;
